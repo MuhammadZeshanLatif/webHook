@@ -12,9 +12,9 @@ app.post('/generate-audio', async (req, res) => {
     const text = `Just saw your appointment come in! Super excited to get to know more about you, ${name}! Make sure you watch this video so you can have an idea of what we do here and what we’re going to be talking about on your call.`;
 
     try {
-        const response = await axios.post('https://api.elevenlabs.io/v1/text-to-speech/sk_6a4cdf8d3a6bef70f3347decdbc53458b95cb08db22d8d88', {
+        const response = await axios.post('https://api.elevenlabs.io/v1/text-to-speech/wj3cRbS505YeXnPYo5bu', {
             text: text,
-            model_id: 'wj3cRbS505YeXnPYo5bu',
+            model_id: 'eleven_monolingual_v1',
             voice_settings: {
                 stability: 0.5,
                 similarity_boost: 0.5
@@ -23,7 +23,7 @@ app.post('/generate-audio', async (req, res) => {
             headers: {
                 'Accept': 'audio/mpeg',
                 'Content-Type': 'application/json',
-                'xi-api-key': 'YOUR_API_KEY'
+                'xi-api-key': 'sk_6a4cdf8d3a6bef70f3347decdbc53458b95cb08db22d8d88'
             },
             responseType: 'arraybuffer'
         });

@@ -33,7 +33,10 @@ app.post('/generate-audio', async (req, res) => {
 
         const audioFilePath = 'output.mp3';
         fs.writeFileSync(audioFilePath, response.data);
-
+        res.set({
+            'Content-Type': 'audio/mpeg',
+            'Content-Disposition': `attachment; filename="${audioFilePath}"`
+        });
         res.sendFile(audioFilePath, { root: __dirname });
     } catch (error) {
         console.error('Error generating audio:', error);

@@ -2,15 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const fs = require('fs');
-const app = express();
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-// app.get('/', async (req, res) => {
-//     res.status(200).send('Error generating audio');
-// });
+
 app.post('/generate-audio', async (req, res) => {
     const { name } = req.body;
     const text = `Just saw your appointment come in! Super excited to get to know more about you, ${name}! Make sure you watch this video so you can have an idea of what we do here and what we’re going to be talking about on your call.`;
@@ -57,12 +55,25 @@ app.post('/generate-audio', async (req, res) => {
         res.status(500).send('Error generating audio');
     }
 });
+
 app.get('/audio/:fileName', (req, res) => {
     const fileName = req.params.fileName;
     const filePath = path.join(__dirname, fileName);
-    res.sendFile(filePath);
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            console.error('Error sending file:', err);
+            res.status(500).send('Error sending file');
+        } else {
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                } else {
+                    console.log(`File ${fileName} deleted successfully`);
+                }
+            });
+        }
+    });
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

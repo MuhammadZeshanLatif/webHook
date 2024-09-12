@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const fs = require('fs');
 const app = express();
+const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
@@ -30,37 +32,37 @@ app.post('/generate-audio', async (req, res) => {
             headers,
             responseType: 'arraybuffer'
         });
-
-        const audioFilePath = 'output.mp3';
+        const randomFileName = `audio_${uuidv4()}.mp3`;
+        const audioFilePath = randomFileName;
+        const url = `${req.protocol}://${req.get('host')}/audio/${randomFileName}`;
         fs.writeFileSync(audioFilePath, response.data);
-        res.set({
-            'Content-Type': 'audio/mpeg',
-            'Content-Disposition': `attachment; filename="${audioFilePath}"`
-        });
-        res.sendFile(audioFilePath, { root: __dirname });
+        const responsePayload = {
+            "version": "v2",
+            "content": {
+                "messages": [
+                    {
+                        "type": "audio",
+                        url,
+                        "buttons": []
+                    }
+                ],
+                "actions": [],
+                "quick_replies": []
+            }
+        };
+    
+        res.json(responsePayload);
     } catch (error) {
         console.error('Error generating audio:', error);
         res.status(500).send('Error generating audio');
     }
 });
-app.post('/send-audio', (req, res) => {
-    const responsePayload = {
-        "version": "v2",
-        "content": {
-            "messages": [
-                {
-                    "type": "audio",
-                    "url": "https://file-examples.com/storage/fe6993554766e3161a375a5/2017/11/file_example_MP3_700KB.mp3",
-                    "buttons": []
-                }
-            ],
-            "actions": [],
-            "quick_replies": []
-        }
-    };
-
-    res.json(responsePayload);
+app.get('/audio/:fileName', (req, res) => {
+    const fileName = req.params.fileName;
+    const filePath = path.join(__dirname, fileName);
+    res.sendFile(filePath);
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

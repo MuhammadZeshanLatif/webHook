@@ -43,6 +43,24 @@ app.post('/generate-audio', async (req, res) => {
         res.status(500).send('Error generating audio');
     }
 });
+app.post('/send-audio', (req, res) => {
+    const responsePayload = {
+        "version": "v2",
+        "content": {
+            "messages": [
+                {
+                    "type": "audio",
+                    "url": "https://file-examples.com/storage/fe6993554766e3161a375a5/2017/11/file_example_MP3_700KB.mp3",
+                    "buttons": []
+                }
+            ],
+            "actions": [],
+            "quick_replies": []
+        }
+    };
+
+    res.json(responsePayload);
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

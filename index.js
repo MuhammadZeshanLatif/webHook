@@ -14,7 +14,7 @@ app.post('/generate-audio', async (req, res) => {
     const text = `Just saw your appointment come in! Super excited to get to know more about you, ${name}! Make sure you watch this video so you can have an idea of what we do here and what we’re going to be talking about on your call.`;
     const requestBody = {
         text,
-        model_id: 'eleven_monolingual_v2',
+        model_id: 'eleven_monolingual_v1',
         voice_settings: {
             stability: 0.5,
             similarity_boost: 0.5
